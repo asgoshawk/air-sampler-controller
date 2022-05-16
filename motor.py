@@ -97,6 +97,7 @@ class MotorFrame(tk.Frame):
         self.pumps.runMotorB(False)
         self.pumpStatus = self.check_pump_status()
 
+        # GUI
         self.panelTitle_lb = tk.Label(text="Pump", font="Helvetica 18 bold", 
             fg=settings.FG_COLOR, bg=settings.BG_COLOR)
         self.panelTitle_lb.place(x=320+xOffset, y=20+yOffset, anchor=CENTER)
