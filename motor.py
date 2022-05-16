@@ -3,7 +3,7 @@ import tkinter.ttk as ttk
 import tkinter.messagebox as msg
 from tkinter.constants import CENTER, W, E, NW
 import settings
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time, datetime
 from threading import Timer
 
@@ -86,14 +86,16 @@ class MotorFrame(tk.Frame):
         self.pumpTasks = {}
 
         # Pumps setup
-        # GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BCM)
         # GPIO.setwarnings(False)
         inpA1   = 14
         inpA2   = 15
         inpB1   = 17
         inpB2   = 18
-        # self.pumps  = MotorDriver(inpA1, inpA2, inpB1, inpB2)
-        self.pumpStatus = {"A": False, "B":False}
+        self.pumps  = MotorDriver(inpA1, inpA2, inpB1, inpB2)
+        self.pumps.runMotorA(False)
+        self.pumps.runMotorB(False)
+        self.pumpStatus = self.check_pump_status()
 
         self.panelTitle_lb = tk.Label(text="Pump", font="Helvetica 18 bold", 
             fg=settings.FG_COLOR, bg=settings.BG_COLOR)
@@ -188,7 +190,7 @@ class MotorFrame(tk.Frame):
         return {"A": self.pumps.runMotorAStatus(), "B":self.pumps.runMotorBStatus()}
 
     def update_indicator(self, canvasNameA, canvasNameB):
-        # pumpStates = self.check_pump_status()
+        self.pumpStatus = self.check_pump_status()
         # pumpStatus = {"A": True, "B":False}
         if self.pumpStatus["A"]:
             self.draw_indicator(canvasNameA, settings.GREEN)
@@ -206,16 +208,20 @@ class MotorFrame(tk.Frame):
     
     def toggle_pump_btn_a(self):
         if self.pumpStatus["A"]:
-            self.pumpStatus["A"] = False
+            self.pumps.runMotorA(False)
+            # self.pumpStatus["A"] = False
         else:
-            self.pumpStatus["A"] = True
+            self.pumps.runMotorA(True)
+            # self.pumpStatus["A"] = True
         self.update_indicator(self.pumpAIndicator_cv, self.pumpBIndicator_cv)
 
     def toggle_pump_btn_b(self):
         if self.pumpStatus["B"]:
-            self.pumpStatus["B"] = False
+            self.pumps.runMotorB(False)
+            # self.pumpStatus["B"] = False
         else:
-            self.pumpStatus["B"] = True
+            self.pumps.runMotorB(True)
+            # self.pumpStatus["B"] = True
         self.update_indicator(self.pumpAIndicator_cv, self.pumpBIndicator_cv)
 
     def test_task_a(self, var):
@@ -280,15 +286,15 @@ class MotorFrame(tk.Frame):
                     taskA = []
                     taskB = []
                     if targetPump[0]:
-                        # taskA = [self.set_task(startTimeObj, self.pumps.runMotorA, True),
-                            # self.set_task(stopTimeObj, self.pumps.runMotorA, False)]
-                        taskA = [self.set_task(startTimeObj, self.test_task_a, True),
-                                self.set_task(stopTimeObj, self.test_task_a, False)]
+                        taskA = [self.set_task(startTimeObj, self.pumps.runMotorA, True),
+                            self.set_task(stopTimeObj, self.pumps.runMotorA, False)]
+                        # taskA = [self.set_task(startTimeObj, self.test_task_a, True),
+                                # self.set_task(stopTimeObj, self.test_task_a, False)]
                     if targetPump[1]:
-                        # taskB = [self.set_task(startTimeObj, self.pumps.runMotorA, True),
-                            # self.set_task(stopTimeObj, self.pumps.runMotorA, False)]
-                        taskB = [self.set_task(startTimeObj, self.test_task_b, True),
-                                self.set_task(stopTimeObj, self.test_task_b, False)]
+                        taskB = [self.set_task(startTimeObj, self.pumps.runMotorA, True),
+                            self.set_task(stopTimeObj, self.pumps.runMotorA, False)]
+                        # taskB = [self.set_task(startTimeObj, self.test_task_b, True),
+                                # self.set_task(stopTimeObj, self.test_task_b, False)]
                     taskDict[str(self.taskCounts)] = {"taskA": taskA, "taskB": taskB }
                     self.pumpTasks.update(taskDict)
                     self.taskCounts+=1
@@ -324,6 +330,6 @@ class MotorFrame(tk.Frame):
                 self.delete_task(tasks)
 
     def shutdown_pumps(self):
-        self.pump.runMotorA(False)
-        self.pump.runMotorB(False)
+        self.pumps.runMotorA(False)
+        self.pumps.runMotorB(False)
         GPIO.cleanup()

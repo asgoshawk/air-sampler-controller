@@ -23,14 +23,13 @@ class Window(tk.Tk):
         self.menuBar.add_cascade(label='Help', menu=self.helpMenu)
         self.config(menu=self.menuBar)
 
+        # Frame
         self.sensorFrame = FlowFrame(self, width=settings.WIDTH, height=settings.HEIGHT*0.4, xOffset=0, yOffset=0)
-
         self.motorFrame = MotorFrame(self, width=settings.WIDTH, height=settings.HEIGHT*0.4, xOffset=0, yOffset=140)
-
 
 if __name__ == "__main__":
     print("Start the APP.")
     window = Window()
     window.mainloop()
-
+    window.motorFrame.shutdown_pumps()
     

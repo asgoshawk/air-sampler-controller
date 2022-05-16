@@ -1,13 +1,15 @@
+from threading import Thread, Event
 import tkinter as tk
+from tkinter import filedialog
 import tkinter.messagebox as msg
 from tkinter.constants import CENTER, W, E
 import settings
 import time, datetime
-# import pytz
-# import board
-# import busio
-# from adafruit_ads1x15 import ads1115 as adafruit_ads1115
-# from adafruit_ads1x15.analog_in import AnalogIn
+import os
+import board
+import busio
+from adafruit_ads1x15 import ads1115 as adafruit_ads1115
+from adafruit_ads1x15.analog_in import AnalogIn
 
 class FS1012:
     '''
@@ -66,6 +68,9 @@ class FlowFrame(tk.Frame):
 
         # Thread
         self.isLogging = False
+        self.thread = None
+        self.event = Event()
+        self.csv = None
 
         self.panelTitle_lb = tk.Label(text="Flow Sensor", font="Helvetica 18 bold", 
             fg=settings.FG_COLOR, bg=settings.BG_COLOR)
@@ -113,10 +118,10 @@ class FlowFrame(tk.Frame):
 
     def select_log_dir(self):
         if self.logFile_en.get() is None:
-            dirPath = tk.filedialog.askdirectory()
+            dirPath = filedialog.askdirectory()
             self.logFile_en.insert(0, dirPath)
         else:
-            dirPath = tk.filedialog.askdirectory()
+            dirPath = filedialog.askdirectory()
             self.logFile_en.delete(0,'end')
             self.logFile_en.insert(0, dirPath)
 
@@ -131,19 +136,64 @@ class FlowFrame(tk.Frame):
             self.isLogging = False
 
     def start_logging(self):
-        logDir = self.logFile_en.get()
-        if logDir is None or len(self.logFile_en.get()) == 0:
+        self.logDir = self.logFile_en.get()
+        if self.logDir is None or len(self.logFile_en.get()) == 0:
             msg.showerror("Error", "Please select a directory to save the log file.")
             return False
         else:
             try:
                 timeStamp = datetime.datetime.now().strftime("%Y%m%d_%H-%M-%S")
-                with open(logDir + "/flow_log_" + timeStamp + ".csv", "w") as csv:
-                    csv.write("Hello,")
+                self.csv = open(self.logDir + "/flow_log_" + timeStamp + ".csv", "w")
+                self.write_csv_header()
+                self.thread = LoopThread(self.event, 1, self.record_csv)
+                self.thread.start()
                 return True
             except FileNotFoundError:
                 msg.showerror("Error", "No such file or directory. Please retry.")
                 return False
     
     def stop_logging(self):
-        pass
+        self.event.set()
+        self.csv.close()
+
+    def write_csv_header(self):
+        self.csv.write("Time,TP1,TP2,Flow_Rate")
+        self.csv.seek(self.csv.tell() - 1, os.SEEK_SET)
+        self.csv.write("\n")
+
+    def record_csv(self):
+        if time.localtime().tm_min%60 == 0 and time.localtime().tm_sec == 0:
+            timeStamp = datetime.datetime.now().strftime("%Y%m%d_%H-%M-%S")
+            self.csv = open(self.logDir + "/flow_log_" + timeStamp + ".csv", "w")
+            self.write_csv_header()
+        
+        self.csv.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+",")
+        self.csv.write(str(1)+","+str(0)+","+str(123))
+        self.csv.write("\n")
+
+class LoopThread(Thread):
+    def __init__(self, event, interval, func, *args):
+        Thread.__init__(self)
+        self.event = event
+        self.interval = interval
+        self.func = func
+        self.args = args
+
+    def run(self):
+        while not self.event.wait(self.interval - time.time() % self.interval):
+            self.func(*self.args)
+            time.sleep(0.01)
+
+def test_sensor():
+    fs1012 = FS1012({})
+    print(fs1012.check_status)
+
+    while True:
+        print("TP1: %.4f mV, TP2: %.4f mV" %(fs1012.tp1_value*1000, fs1012.tp2_value*1000))
+        time.sleep(1)
+
+if __name__ == "__main__":
+    try:
+        test_sensor()
+    except Exception as e:
+        print(e)
