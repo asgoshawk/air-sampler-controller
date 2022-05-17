@@ -72,7 +72,7 @@ class FlowFrame(tk.Frame):
         self.csv = None
 
         # Thread (Sensor)
-        self.flowSensor = FS1012()
+        self.flowSensor = FS1012({})
         self.flowSensorTP1 = 0
         self.flowSensorTP2 = 0
         self.sensorThread = LoopThread(1, self.read_sensor)
