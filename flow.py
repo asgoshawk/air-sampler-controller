@@ -129,11 +129,11 @@ class FlowFrame(tk.Frame):
     def read_sensor(self):
         if self.check_sensor():
             self.update_indicator(True)
-            self.flowSensorTP1 = self.flowSensor.tp1_value()
-            self.flowSensorTP2 = self.flowSensor.tp2_value()
+            self.flowSensorTP1 = self.flowSensor.tp1_value
+            self.flowSensorTP2 = self.flowSensor.tp2_value
             # self.flowSensorTP1 = random.randint(1,2000)     # Fake value
             # self.flowSensorTP2 = random.randint(1,2000)     # Fake value
-            self.sensorFlowRateValue_lb.config(text=str(self.flowSensorTP1))
+            self.sensorFlowRateValue_lb.config(text="{:.2f}".format(self.flowSensorTP1))
         else:
             self.update_indicator(False)
             self.sensorFlowRateValue_lb.config(text="0")
@@ -193,7 +193,7 @@ class FlowFrame(tk.Frame):
             return True
 
     def write_csv_header(self):
-        self.csv.write("Time,TP1,TP2,Flow_Rate")
+        self.csv.write("Time,TP1(mV),TP2(mV),Flow_Rate")
         self.csv.seek(self.csv.tell() - 1, os.SEEK_SET)
         self.csv.write("\n")
 
@@ -204,7 +204,7 @@ class FlowFrame(tk.Frame):
             self.write_csv_header()
         
         self.csv.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+",")
-        self.csv.write(str(self.flowSensorTP1)+","+str(self.flowSensorTP2)+","+str(self.flowSensorTP1 - self.flowSensorTP2))
+        self.csv.write("{:.2f},{:.2f},{:.2f}".format(self.flowSensorTP1*1000,self.flowSensorTP2*1000,(self.flowSensorTP1 - self.flowSensorTP2)*1000))
         self.csv.write("\n")
 
     def force_stop_threads(self):

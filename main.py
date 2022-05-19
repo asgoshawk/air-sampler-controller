@@ -29,7 +29,7 @@ class Window(tk.Tk):
         self.motorFrame = MotorFrame(self, width=settings.WIDTH, height=settings.HEIGHT*0.4, xOffset=0, yOffset=140)
 
     def close_window(self):
-        # self.motorFrame.shutdown_pumps()
+        self.motorFrame.shutdown_pumps()
         self.sensorFrame.force_stop_threads()
         time.sleep(1)
         self.destroy()
