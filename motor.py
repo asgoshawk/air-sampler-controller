@@ -114,10 +114,10 @@ class MotorFrame(tk.Frame):
 
         # Pump manually control
         self.pumpAToggler_btn = tk.Button(text="ON", 
-             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, pady=0, width=6,
+             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, pady=0, width=4,
             command=self.toggle_pump_btn_a)
         self.pumpBToggler_btn = tk.Button(text="ON", 
-             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, pady=0, width=6,
+             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, pady=0, width=4,
             command=self.toggle_pump_btn_b)
         self.pumpAToggler_btn.place(x=220+xOffset, y=60+yOffset, anchor=CENTER)
         self.pumpBToggler_btn.place(x=220+xOffset, y=100+yOffset, anchor=CENTER)
@@ -126,15 +126,15 @@ class MotorFrame(tk.Frame):
         self.setTaskPumpA_val = tk.IntVar()
         self.setTaskPumpB_val = tk.IntVar()
         self.setTaskPumpA_btn = tk.Checkbutton(text="Pump A", variable=self.setTaskPumpA_val,
-            onvalue=True, offvalue=False, 
+            onvalue=True, offvalue=False, highlightthickness=0,
             bg=settings.BG_COLOR, fg=settings.FG_COLOR, selectcolor=settings.CUR_LINE,
             activebackground=settings.BG_COLOR, activeforeground=settings.FG_COLOR,)
         self.setTaskPumpB_btn = tk.Checkbutton(text="Pump B", variable=self.setTaskPumpB_val,
-            onvalue=True, offvalue=False,
+            onvalue=True, offvalue=False, highlightthickness=0,
             bg=settings.BG_COLOR, fg=settings.FG_COLOR, selectcolor=settings.CUR_LINE,
             activebackground=settings.BG_COLOR, activeforeground=settings.FG_COLOR,)
-        self.setTaskPumpA_btn.place(x=275+xOffset, y=60+yOffset, anchor=W)
-        self.setTaskPumpB_btn.place(x=275+xOffset, y=100+yOffset, anchor=W)
+        self.setTaskPumpA_btn.place(x=265+xOffset, y=60+yOffset, anchor=W)
+        self.setTaskPumpB_btn.place(x=265+xOffset, y=100+yOffset, anchor=W)
 
         self.setStartTime_lb = tk.Label(text="From", fg=settings.FG_COLOR, bg=settings.BG_COLOR)
         self.setStarTime_en = tk.Entry(width=17)
@@ -146,9 +146,9 @@ class MotorFrame(tk.Frame):
         self.setTask_btn = tk.Button(text="Set Task", 
              bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, padx=5, pady=20,
              command=self.set_pump_task)
-        self.setStartTime_lb.place(x=355+xOffset, y=60+yOffset, anchor=W)
+        self.setStartTime_lb.place(x=345+xOffset, y=60+yOffset, anchor=W)
         self.setStarTime_en.place(x=525+xOffset, y=60+yOffset, anchor=E)
-        self.setDuration_lb.place(x=355+xOffset, y=100+yOffset, anchor=W)
+        self.setDuration_lb.place(x=345+xOffset, y=100+yOffset, anchor=W)
         self.setDuration_sb.place(x=465+xOffset, y=100+yOffset, anchor=E)
         self.setDurationUnit_cb.place(x=525+xOffset, y=100+yOffset, anchor=E)
         self.setTask_btn.place(x=600+xOffset, y=80+yOffset, anchor=E)
@@ -172,20 +172,20 @@ class MotorFrame(tk.Frame):
         self.taskList_tv.heading("pumpA", text="Pump A")
         self.taskList_tv.heading("pumpB", text="Pump B")
         self.taskListDelete_btn = tk.Button(text="Delete Task", 
-             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, width=10,
+             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, width=8,
              command=self.delete_pump_task)
         self.taskListDeleteAll_btn = tk.Button(text="Delete All", 
-             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, width=10,
+             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, width=8,
              command=self.delete_all_tasks)
 
         self.taskList_tv.place(x=40+xOffset, y=140+yOffset, anchor=NW)
         self.taskListDelete_btn.place(x=40+xOffset, y=300+yOffset, anchor=W)
-        self.taskListDeleteAll_btn.place(x=140+xOffset, y=300+yOffset, anchor=W)
+        self.taskListDeleteAll_btn.place(x=150+xOffset, y=300+yOffset, anchor=W)
 
         self.update_indicator(self.pumpAIndicator_cv, self.pumpBIndicator_cv)
 
     def draw_indicator(self, canvasName, color):
-        return canvasName.create_oval(1, 1, 19, 19, fill=color, outline="")
+        return canvasName.create_oval(2, 2, 18, 18, fill=color, outline="")
 
     def check_pump_status(self):
         return {"A": self.pumps.runMotorAStatus(), "B":self.pumps.runMotorBStatus()}
@@ -246,6 +246,7 @@ class MotorFrame(tk.Frame):
             print("%s(%s) will execute at %s." 
                 %(funcName, funcArgs, execTimeObj.strftime("%Y-%m-%d %H:%M:%S")))
             taskTimer = Timer(secToExec, wrap_func)
+            taskTimer.daemon = True
             taskTimer.start()
             return taskTimer
         else:

@@ -22,7 +22,7 @@ class FS1012:
     5   TP2-    Output  Analog
     6   TP2+    Output  GND
     '''
-    def __init__(self, calObj):
+    def __init__(self, calParams):
         try:
             self.i2c            = busio.I2C(board.SCL, board.SDA)
             self.ads1115        = adafruit_ads1115.ADS1115(self.i2c)
@@ -38,7 +38,8 @@ class FS1012:
         # TP1+, TP2+, calibration object for voltage-flow convertion
         self._tp1       = 0
         self._tp2       = 0
-        self._calObj    = calObj
+        self._calParams = calParams     # quadratic
+        self._flowRate  = 0
     
     @property
     def check_status(self):
@@ -53,7 +54,16 @@ class FS1012:
     def tp2_value(self):
         self._tp2 = self.adschls[1].voltage if self._status else 0
         return self._tp2
-
+    
+    @property
+    def flow_rate(self) -> float:
+        diff        = self._tp2 - self._tp1
+        tmp         = 0.0
+        paramsLen   = len(self._calParams)
+        for i in range(paramsLen):
+            tmp += self._calParams[i]*diff**(paramsLen-1-i)
+        self._flowRate = tmp if tmp > 0 else 0.0
+        return self._flowRate
 
 class FlowFrame(tk.Frame):
     def __init__(self, master, width, height, xOffset, yOffset):
@@ -72,10 +82,13 @@ class FlowFrame(tk.Frame):
         self.csv = None
 
         # Thread (Sensor)
-        self.flowSensor = FS1012({})
+        # calParams = [88.28616669316914, -14.145696797096235]
+        calParams = [11.32749266, 36.21084542, 13.66281863]
+        self.flowSensor = FS1012(calParams)
         self.flowSensorTP1 = 0
         self.flowSensorTP2 = 0
-        self.sensorThread = LoopThread(1, self.read_sensor)
+        self.flowRate = 0
+        self.sensorThread = LoopThread(0.5, self.read_sensor)
 
         # GUI
         self.panelTitle_lb = tk.Label(text="Flow Sensor", font="Helvetica 18 bold", 
@@ -88,18 +101,18 @@ class FlowFrame(tk.Frame):
         self.sensorFlowRateValue_lb = tk.Label(text="0", fg=settings.FG_COLOR, bg=settings.BG_COLOR, width=10)
 
         self.sensorIndicator_lb.place(x=40+xOffset, y=60+yOffset, anchor=W)
-        self.sensorIndicator_cv.place(x=160+xOffset, y=60+yOffset, anchor=CENTER)
+        self.sensorIndicator_cv.place(x=175+xOffset, y=60+yOffset, anchor=CENTER)
         self.sensorFlowRate_lb.place(x=40+xOffset, y=100+yOffset, anchor=W)
-        self.sensorFlowRateValue_lb.place(x=160+xOffset, y=100+yOffset, anchor=CENTER)     
+        self.sensorFlowRateValue_lb.place(x=175+xOffset, y=100+yOffset, anchor=CENTER)     
 
         self.logFile_lb = tk.Label(text="Log File Location", fg=settings.FG_COLOR, bg=settings.BG_COLOR)
         self.logFileSelect_btn = tk.Button(text="Select", 
              bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, pady=0,
              command=self.select_log_dir)
         self.logFileStartStop_btn = tk.Button(text="Start Logging", 
-             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, pady=0, width=16,
+             bg=settings.FG_COLOR, fg=settings.BG_COLOR, height=1, bd=0, pady=0, width=14,
             command=self.toggle_logging_btn)
-        self.logFile_en = tk.Entry(width=35)
+        self.logFile_en = tk.Entry(width=30)
         self.logFile_en.insert(0, 'Please select a directory.')
 
         self.logFile_lb.place(x=280+xOffset, y=60+yOffset, anchor=W)
@@ -118,7 +131,7 @@ class FlowFrame(tk.Frame):
         return self.flowSensor.check_status
 
     def draw_indicator(self, canvasName, color):
-        return canvasName.create_oval(1, 1, 19, 19, fill=color, outline="")
+        return canvasName.create_oval(2, 2, 18, 18, fill=color, outline="")
 
     def update_indicator(self, status):
         if status:
@@ -131,9 +144,10 @@ class FlowFrame(tk.Frame):
             self.update_indicator(True)
             self.flowSensorTP1 = self.flowSensor.tp1_value
             self.flowSensorTP2 = self.flowSensor.tp2_value
+            self.flowRate = self.flowSensor.flow_rate       # Need to execute after updating tp1, tp2.
             # self.flowSensorTP1 = random.randint(1,2000)     # Fake value
             # self.flowSensorTP2 = random.randint(1,2000)     # Fake value
-            self.sensorFlowRateValue_lb.config(text="{:.2f}".format(self.flowSensorTP1))
+            self.sensorFlowRateValue_lb.config(text="{:.2f}".format(self.flowRate))
         else:
             self.update_indicator(False)
             self.sensorFlowRateValue_lb.config(text="0")
@@ -204,8 +218,12 @@ class FlowFrame(tk.Frame):
             self.write_csv_header()
         
         self.csv.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+",")
-        self.csv.write("{:.2f},{:.2f},{:.2f}".format(self.flowSensorTP1*1000,self.flowSensorTP2*1000,(self.flowSensorTP1 - self.flowSensorTP2)*1000))
+        self.csv.write("{:.2f},{:.2f},{:.2f}".format(self.flowSensorTP1*1000,self.flowSensorTP2*1000,self.flowRate))
         self.csv.write("\n")
+
+    def flow_rate_convert(self, tp1, tp2) -> float:
+        diff = tp2 - tp1
+        return diff**2 + diff + 13.66
 
     def force_stop_threads(self):
         self.stop_logging()
@@ -236,7 +254,8 @@ class LoopThread(Thread):
 
 
 def test_sensor():
-    fs1012 = FS1012({})
+    calParams = [11.32749266, 36.21084542, 13.66281863]
+    fs1012 = FS1012(calParams)
     print(fs1012.check_status)
 
     while True:

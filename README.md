@@ -11,7 +11,15 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip3 install -r requirements.txt
 ```
+
 ### Usage
 ```Shell
 python3 main.py
 ```
+
+:::warning
+If no module named 'tkinter', install the package by running the command:
+```shell
+sudo apt install python3-tk
+```
+:::
