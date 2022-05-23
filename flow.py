@@ -221,10 +221,6 @@ class FlowFrame(tk.Frame):
         self.csv.write("{:.2f},{:.2f},{:.2f}".format(self.flowSensorTP1*1000,self.flowSensorTP2*1000,self.flowRate))
         self.csv.write("\n")
 
-    def flow_rate_convert(self, tp1, tp2) -> float:
-        diff = tp2 - tp1
-        return diff**2 + diff + 13.66
-
     def force_stop_threads(self):
         self.stop_logging()
         time.sleep(0.5)
@@ -259,7 +255,7 @@ def test_sensor():
     print(fs1012.check_status)
 
     while True:
-        print("TP1: %.4f mV, TP2: %.4f mV" %(fs1012.tp1_value*1000, fs1012.tp2_value*1000))
+        print("TP1: %.4f mV, TP2: %.4f mV, Flow rate: %.2f mlpm" %(fs1012.tp1_value*1000, fs1012.tp2_value*1000, fs1012.flow_rate))
         time.sleep(1)
 
 if __name__ == "__main__":
