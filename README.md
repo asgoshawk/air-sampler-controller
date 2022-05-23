@@ -52,7 +52,7 @@ In the pupm panel, two pumps can be activated/deactivated by toggling the ON/OFF
 
 ### Shutdown
 
-Click the X on the top right corner of the window or File > Exit in the toolbar to shutdown all the threads including flow rate logging, pump tasks. The pumps should be turned off at the same time. If the pump still work, execute the following command:
+Click the X on the top right corner of the window or click File > Exit in the toolbar to shutdown all the threads including flow rate logging and pump tasks. The pumps should be turned off at the same time. If the pumps still work, execute the following command:
 
 ```shell
 $ python3 motor_shutdown.py
