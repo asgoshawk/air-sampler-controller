@@ -6,11 +6,11 @@ This is a Python GUI (Tkinter) for controlling the Raspberry Pi based air sample
 ---
 
 ## Requirements
-Raspberry Pi &times; 1 *(Currently worked on 3B & Zero W. Other modules like 3B+, 4B should be okay.)*
-ADS1115 &times; 1 *(Using I<sup>2</sup>C protocol.)*
-DRV8833 &times; 1
-FS1012-1020 &times; 1
-Micro pumps &times; 2 (Voltage range: 3V - 6V)
+- Raspberry Pi &times; 1 *(Currently worked on 3B & Zero W. Other modules like 3B+, 4B should be okay.)*
+- ADS1115 &times; 1 *(Using I<sup>2</sup>C protocol.)*
+- DRV8833 &times; 1
+- FS1012-1020 &times; 1
+- Micro pumps &times; 2 (Voltage range: 3V - 6V)
 
 ---
 
