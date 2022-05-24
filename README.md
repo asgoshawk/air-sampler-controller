@@ -57,19 +57,19 @@ $ python3 main.py
 ```
 Make sure that the X window (xserver) has been installed in the Raspberry Pi, if you want to execute the program through SSH connection. The GUI should come out like below:
 
-![GUI window](https://i.imgur.com/VzBa0tC.png =80%x)
+![GUI window](https://i.imgur.com/VzBa0tC.png)
 
 ### Flow Sensor
 In the flow sensor panel, **select the log file location before click the Start Logging button**. It will start recording the TP1 & TP2 of the flow sensor and the flow rate. The flow rate is converted with a polynomial function which is calibrated with a soap bubble flow meter. The fitting curves are shown below.
 
-![Flow rate vs. analog readout](https://i.imgur.com/IDP2HUn.png =80%x)
+![Flow rate vs. analog readout](https://i.imgur.com/IDP2HUn.png)
 
 > The analog readout might fluctuate at every operation. If the accuracy of flow rate is needed, please do recalibration before starting sampling; otherwise, it can only act as an indicator checking the pumps work properly at the target time.
 
 ### Pump
 In the pupm panel, two pumps can be activated/deactivated by toggling the ON/OFF button beside the status indicators. The pump tasks can be set up in the right panel. The tasks will be shown in the table. To delete tasks, select the tasks in the table and click "Delete Task" button or click "Delete All" to cancel all the tasks.
 
-![Pump task table](https://i.imgur.com/bbhyL2f.png =80%x)
+![Pump task table](https://i.imgur.com/bbhyL2f.png)
 
 ### Shutdown
 
