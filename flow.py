@@ -25,8 +25,8 @@ class FS1012:
     def __init__(self, calParams):
         try:
             self.i2c            = busio.I2C(board.SCL, board.SDA)
-            self.ads1115        = adafruit_ads1115.ADS1115(self.i2c)
-            self.ads1115.gain   = 1
+            self.ads1115        = adafruit_ads1115.ADS1115(self.i2c, settings.ADC_ADDR)
+            self.ads1115.gain   = settings.ADC_GAIN
             self.channels       = [adafruit_ads1115.P0, adafruit_ads1115.P1, adafruit_ads1115.P2, adafruit_ads1115.P3]
             self.adschls        = [AnalogIn(self.ads1115, chl) for chl in self.channels] 
             self._status        = True
@@ -80,6 +80,7 @@ class FlowFrame(tk.Frame):
         self.isLogging = False
         self.loggingThread = None
         self.csv = None
+        self.outputEvery = settings.OUTPUT_SEC
 
         # Thread (Sensor)
         # calParams = [88.28616669316914, -14.145696797096235]
@@ -187,7 +188,7 @@ class FlowFrame(tk.Frame):
                 timeStamp = datetime.datetime.now().strftime("%Y%m%d_%H-%M-%S")
                 self.csv = open(self.logDir + "/flow_log_" + timeStamp + ".csv", "w")
                 self.write_csv_header()
-                self.loggingThread = LoopThread(3, self.record_csv)
+                self.loggingThread = LoopThread(self.outputEvery, self.record_csv)
                 self.loggingThread.setDaemon(True)
                 self.loggingThread.start()
                 print("[Sensor frame] The logging starts.")
@@ -250,7 +251,7 @@ class LoopThread(Thread):
 
 
 def test_sensor():
-    calParams = [11.32749266, 36.21084542, 13.66281863]
+    calParams = settings.CAL_PARAMS
     fs1012 = FS1012(calParams)
     print(fs1012.check_status)
 

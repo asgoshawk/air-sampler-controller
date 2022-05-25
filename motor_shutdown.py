@@ -1,14 +1,18 @@
 import RPi.GPIO as GPIO
+import settings
 from motor import MotorDriver
 
 def shutdown():
     try:
-        GPIO.setmode(GPIO.BCM)
+        if settings.GPIO_MODE == "BOARD":
+            GPIO.setmode(GPIO.BOARD)
+        else:
+            GPIO.setmode(GPIO.BCM)
         # GPIO.setwarnings(False)
-        inpA1   = 14
-        inpA2   = 15
-        inpB1   = 17
-        inpB2   = 18
+        inpA1   = settings.INPA1
+        inpA2   = settings.INPA2
+        inpB1   = settings.INPB1
+        inpB2   = settings.INPB2
         driver  = MotorDriver(inpA1, inpA2, inpB1, inpB2)
 
         driver.runMotorA(False)
