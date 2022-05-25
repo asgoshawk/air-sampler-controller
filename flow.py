@@ -84,7 +84,7 @@ class FlowFrame(tk.Frame):
 
         # Thread (Sensor)
         # calParams = [88.28616669316914, -14.145696797096235]
-        calParams = [11.32749266, 36.21084542, 13.66281863]
+        calParams = settings.CAL_PARAMS
         self.flowSensor = FS1012(calParams)
         self.flowSensorTP1 = 0
         self.flowSensorTP2 = 0
