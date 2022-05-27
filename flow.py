@@ -25,7 +25,7 @@ class FS1012:
     def __init__(self, calParams):
         try:
             self.i2c            = busio.I2C(board.SCL, board.SDA)
-            self.ads1115        = adafruit_ads1115.ADS1115(self.i2c, settings.ADC_ADDR)
+            self.ads1115        = adafruit_ads1115.ADS1115(self.i2c, address=settings.ADC_ADDR)
             self.ads1115.gain   = settings.ADC_GAIN
             self.channels       = [adafruit_ads1115.P0, adafruit_ads1115.P1, adafruit_ads1115.P2, adafruit_ads1115.P3]
             self.adschls        = [AnalogIn(self.ads1115, chl) for chl in self.channels] 
