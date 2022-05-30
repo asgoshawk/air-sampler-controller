@@ -61,10 +61,10 @@ class MotorDriver:
         self._runMotorA = value
         if value:
             GPIO.output(self.inpA1, GPIO.HIGH)
-            print("[MotorA] Is running.")
+            return "[MotorA] Is running."
         else: 
             GPIO.output(self.inpA1, GPIO.LOW)
-            print("[MotorA] Is stopped.")
+            return "[MotorA] Is stopped."
 
     # @property
     def runMotorBStatus(self):
@@ -75,10 +75,10 @@ class MotorDriver:
         self._runMotorB = value
         if value:
             GPIO.output(self.inpB1, GPIO.HIGH)
-            print("[MotorB] Is running.")
+            return "[MotorB] Is running."
         else:
             GPIO.output(self.inpB1, GPIO.LOW)
-            print("[MotorB] Is stopped.")
+            return "[MotorB] Is stopped."
 
 
 class MotorFrame(tk.Frame):

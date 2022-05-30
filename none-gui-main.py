@@ -61,7 +61,8 @@ class MotorHandler:
         funcArgs = ",".join(map(str, args))
         funcName = func.__name__
         def wrap_func():
-            func(*args)
+            tmp = func(*args)
+            print_info(str(tmp))
 
         secToExec = (execTimeObj - datetime.datetime.now()).total_seconds()
         if secToExec > 0:
