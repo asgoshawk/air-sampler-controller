@@ -50,8 +50,8 @@ class MotorHandler:
         inpB1   = settings.INPB1
         inpB2   = settings.INPB2
         self.pumps  = MotorDriver(inpA1, inpA2, inpB1, inpB2)
-        self.pumps.runMotorA(False)
-        self.pumps.runMotorB(False)
+        print_info(str(self.pumps.runMotorA(False)))
+        print_info(str(self.pumps.runMotorB(False)))
         self.pumpStatus = self.check_pump_status()
 
     def check_pump_status(self):
@@ -136,8 +136,8 @@ class MotorHandler:
         return remainTasks
 
     def shutdown_pumps(self):
-        self.pumps.runMotorA(False)
-        self.pumps.runMotorB(False)
+        print_info(self.pumps.runMotorA(False))
+        print_info(self.pumps.runMotorB(False))
         print_info("[Motor ] All pumps are stopped.")
         # GPIO.cleanup()
 
@@ -248,7 +248,7 @@ class Main():
 
     def run(self):
         self.pumpHandler = MotorHandler()
-        self.pumpHandler.shutdown_pumps()
+        # self.pumpHandler.shutdown_pumps()
         
         if self.haveSensor and self.setLogging:
             self.sensorHandler = FlowHandler()
