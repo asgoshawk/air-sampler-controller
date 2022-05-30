@@ -110,5 +110,5 @@ If the GUI control is not needed, use the none GUI script with task file for sim
 After configuring the `task.json` (or the file name you want), run the command:
 
 ```shell
-python3 none_gui_main.py task.json
+$ python3 none_gui_main.py task.json
 ```
