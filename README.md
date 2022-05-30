@@ -21,9 +21,9 @@ The picture below shows the pipe arrangement for the air sampler.
 ![Pipe arrangement](https://i.imgur.com/lH8WWFs.jpg)
 
 1. Check valve / Non-return valve
-2. HDPE tubing
+2. PTFE tubing
 3. Brass nut
-4. PTFE ferrule
+4. Nylon ferrule
 5. Brass fitting body (where sorbent tube installed)
 6. HDPE tubing
 7. Tape seal (wrap the connector to fit with PTFE tubing)
