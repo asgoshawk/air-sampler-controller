@@ -1,0 +1,21 @@
+{
+    "haveSensor": true,
+    "flowRateLogging": true,
+    "flowRateLoggingLocation": "./",
+    "pumpTasks": [
+        {
+            "startTime": "",
+            "duration": 10,
+            "durationUnit": "sec",
+            "pumpA": true,
+            "pumpB": false
+        },
+        {
+            "startTime": "",
+            "duration": 10,
+            "durationUnit": "min",
+            "pumpA": true,
+            "pumpB": true
+        }
+    ]
+}

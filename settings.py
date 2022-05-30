@@ -67,7 +67,7 @@ INPB1, INPB2:
 
 '''
 GPIO_MODE   = "BCM" 
-INPA1       = 14
-INPA2       = 15
-INPB1       = 17
-INPB2       = 18
+INPA1       = 17
+INPA2       = 27
+INPB1       = 23
+INPB2       = 24

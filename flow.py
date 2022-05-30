@@ -150,6 +150,9 @@ class FlowFrame(tk.Frame):
             # self.flowSensorTP2 = random.randint(1,2000)     # Fake value
             self.sensorFlowRateValue_lb.config(text="{:.2f}".format(self.flowRate))
         else:
+            self.flowSensorTP1 = 0
+            self.flowSensorTP2 = 0
+            self.flowRate = 0
             self.update_indicator(False)
             self.sensorFlowRateValue_lb.config(text="0")
     
