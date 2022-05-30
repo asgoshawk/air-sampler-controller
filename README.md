@@ -78,3 +78,37 @@ Click the X on the top right corner of the window or File > Exit in the toolbar 
 ```shell
 $ python3 motor_shutdown.py
 ```
+
+### None GUI Script
+
+If the GUI control is not needed, use the none GUI script with task file for simplicity. Before executing the script, make sure you have set up the `task.json` :
+
+```javascript
+{
+    "haveSensor": true,
+    "flowRateLogging": true,
+    "flowRateLoggingLocation": "./",
+    "pumpTasks": [
+        {
+            "startTime": "2022-12-31 00:00:00",
+            "duration": 10,
+            "durationUnit": "sec",
+            "pumpA": true,
+            "pumpB": true
+        },
+        {
+            "startTime": "2022-12-31 01:30:00",
+            "duration": 10,
+            "durationUnit": "min",
+            "pumpA": true,
+            "pumpB": false
+        }
+    ]
+}
+```
+
+After configuring the `task.json` (or the file name you want), run the command:
+
+```shell
+python3 none_gui_main.py task.json
+```
