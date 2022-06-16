@@ -109,8 +109,8 @@ class MotorHandler:
                     taskA = [self.set_task(startTimeObj, self.pumps.runMotorA, True),
                         self.set_task(stopTimeObj, self.pumps.runMotorA, False)]
                 if targetPump[1]:
-                    taskB = [self.set_task(startTimeObj, self.pumps.runMotorA, True),
-                        self.set_task(stopTimeObj, self.pumps.runMotorA, False)]
+                    taskB = [self.set_task(startTimeObj, self.pumps.runMotorB, True),
+                        self.set_task(stopTimeObj, self.pumps.runMotorB, False)]
                 # taskDict = {"taskA": taskA, "taskB": taskB }
                 self.pumpTasks.append({"taskA": taskA, "taskB": taskB })
 
